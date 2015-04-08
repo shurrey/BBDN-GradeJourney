@@ -1,0 +1,35 @@
+apply plugin: "java"
+apply plugin: "war"
+apply plugin: "maven"
+apply plugin: "eclipse"
+
+// define the version for the project when publishing to maven
+group "bbdn.lis.gradejourney"
+version "1.0-SNAPSHOT"
+
+defaultTasks 'clean', 'build', 'deployLocalTomcat'  // Run tasks clean, build, and deployLocalTomcat if no task is specified.
+
+repositories {
+  mavenCentral()
+}
+
+configurations {
+  buildUtils
+}
+
+// define the project's dependencies
+dependencies {
+  compile "org.jdom:jdom:2.0.2"
+}
+
+// After the war file is built, copy the war to the tomcat webapps directory, renaming the war file to remove the version information.
+task deployLocalTomcat(type: Copy, dependsOn: war) {
+    from war
+    into "/Library/Tomcat/libexec/webapps"
+    rename ('GradeJourneyJava-1.0-SNAPSHOT.war', 'GradeJourneyJava.war')
+}
+
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.6'
+}
